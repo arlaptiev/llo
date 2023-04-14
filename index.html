@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Play Sound Example</title>
+  </head>
+  <body>
+    <h1>Play Sound Example</h1>
+    <p>Enter a sequence of notes in the format "[note name]:[duration in milliseconds]", separated by spaces. Use "@" for a pause.</p>
+    <textarea id="notes" rows="4" cols="50"></textarea>
+    <p>Pitch:</p>
+    <input type="range" id="pitch" min="0" max="9" value="0">
+    <p><button id="play">Play</button></p>
+    <script>
+      function playSound(notes, pitch = 0) {
+        const audioCtx = new AudioContext();
+const oscillator1 = audioCtx.createOscillator();
+oscillator1.type = "triangle";
+oscillator1.frequency.setValueAtTime(220, audioCtx.currentTime);
+const oscillator2 = audioCtx.createOscillator();
+oscillator2.type = "sawtooth";
+oscillator2.frequency.setValueAtTime(330, audioCtx.currentTime);
+const oscillator3 = audioCtx.createOscillator();
+oscillator3.type = "square";
+oscillator3.frequency.setValueAtTime(440, audioCtx.currentTime);
+const gainNode1 = audioCtx.createGain();
+gainNode1.gain.setValueAtTime(0.5, audioCtx.currentTime);
+const gainNode2 = audioCtx.createGain();
+gainNode2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+const gainNode3 = audioCtx.createGain();
+gainNode3.gain.setValueAtTime(0.2, audioCtx.currentTime);
+oscillator1.connect(gainNode1);
+oscillator2.connect(gainNode2);
+oscillator3.connect(gainNode3);
+gainNode1.connect(audioCtx.destination);
+gainNode2.connect(audioCtx.destination);
+gainNode3.connect(audioCtx.destination);
+const tempo = 120;
+const eighthNoteDuration = 60 / tempo / 2; // eighth note duration in seconds
+const rhythm = [1, 0.5, 1.5, 0.5, 0.5, 1, 1.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5]; // longer, irregular rhythm pattern
+const sequenceDuration = 5; // duration in seconds
+let time = audioCtx.currentTime;
+let sequenceTime = 0;
+while (sequenceTime < sequenceDuration) {
+  for (let i = 0; i < rhythm.length; i++) {
+    const duration = eighthNoteDuration * rhythm[i];
+    const frequency = 220 + Math.random() * 220; // unpredictable melody
+    oscillator1.frequency.setValueAtTime(frequency, time);
+    oscillator2.frequency.setValueAtTime(frequency * 1.5, time);
+    oscillator3.frequency.setValueAtTime(frequency * 2, time);
+    oscillator1.start(time);
+    oscillator2.start(time);
+    oscillator3.start(time);
+    oscillator1.stop(time + duration);
+    oscillator2.stop(time + duration);
+    oscillator3.stop(time + duration);
+    time += duration;
+    sequenceTime += duration;
+    if (sequenceTime >= sequenceDuration) {
+      break;
+    }
+  }
+}
+
+
+
+        // const audioContext = new AudioContext();
+        // const noteStrings = notes.split(" ");
+        // let time = audioContext.currentTime;
+        
+        // for (let i = 0; i < noteStrings.length; i++) {
+        //   const noteString = noteStrings[i];
+        //   const [note, duration] = noteString.split(":");
+          
+        //   if (note === "@") {
+        //     time += Number(duration) / 1000;
+        //   } else {
+        //     const oscillator = audioContext.createOscillator();
+        //     const frequency = getFrequency(note, pitch);
+        //     oscillator.frequency.setValueAtTime(frequency, time);
+        //     oscillator.connect(audioContext.destination);
+        //     oscillator.start(time);
+        //     oscillator.stop(time + Number(duration) / 1000);
+        //     time += Number(duration) / 1000;
+        //   }
+        // }
+        
+        function getFrequency(note, pitch) {
+          const notesMap = {
+            "C": 261.63,
+            "C#": 277.18,
+            "D": 293.66,
+            "D#": 311.13,
+            "E": 329.63,
+            "F": 349.23,
+            "F#": 369.99,
+            "G": 392.00,
+            "G#": 415.30,
+            "A": 440.00,
+            "A#": 466.16,
+            "B": 493.88
+          };
+          const frequency = notesMap[note];
+          const semitones = pitch * 100;
+          return frequency * Math.pow(2, semitones / 1200);
+        }
+      }
+
+      
+      const playButton = document.getElementById("play");
+      playButton.addEventListener("click", () => {
+        const notes = document.getElementById("notes").value;
+        const pitch = document.getElementById("pitch").value;
+        playSound(notes, pitch);
+      });
+    </script>
+  </body>
+</html>

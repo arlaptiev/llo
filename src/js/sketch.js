@@ -1,15 +1,15 @@
 
-const { ipcRenderer } = require("electron");
+const { ipcRenderer } = require("electron"); // ipcRenderer is used to send messages to the main process
 
-// Serial Port
-const { SerialPort } = require('serialport')
-var sp = null;
+// // Serial Port
+// const { SerialPort } = require('serialport')
+// var sp = null;
 
 
 
-// Initialize variables
-var c;
-var response;
+// // Initialize variables
+// var c;
+// var response;
 
 
 
@@ -17,35 +17,35 @@ var response;
 // GPT Connection via OpenAI NodeJS
 //////////////////////////////////////////////////////////////////
 //https://useems.github.io/openai-nodejs/index.html
-const OpenAI = require('openai-nodejs');
-const client = new OpenAI(OPENAI_API_KEY);
+// const OpenAI = require('openai-nodejs');
+// const client = new OpenAI(OPENAI_API_KEY);
 
 
-// Get a color when app is first loaded
-let prompt = "the hex code for color 'bright pink' is";
-let startColor;
+// // Get a color when app is first loaded
+// let prompt = "the hex code for color 'bright pink' is";
+// let startColor;
 
-client.complete(prompt, { stop: ['\n', '"'], temperature: 0 })
-    .then(completion => {
-        console.log(`Result: ${prompt}${completion.choices[0].text}`);
+// client.complete(prompt, { stop: ['\n', '"'], temperature: 0 })
+//     .then(completion => {
+//         console.log(`Result: ${prompt}${completion.choices[0].text}`);
 
-        // Grab string from the array
-        startColor = completion.choices[0].text;
+//         // Grab string from the array
+//         startColor = completion.choices[0].text;
 
-        // Remove spaces from the string
-        startColor = trim(startColor);
+//         // Remove spaces from the string
+//         startColor = trim(startColor);
 
-        // Remove single quotes from the string
-        startColor = startColor.replace(/'/g, '');
+//         // Remove single quotes from the string
+//         startColor = startColor.replace(/'/g, '');
 
-        //remove period from the string
-        startColor = startColor.replace(/\./g, '');
+//         //remove period from the string
+//         startColor = startColor.replace(/\./g, '');
 
-        // update background color
-        c = color(startColor);
+//         // update background color
+//         c = color(startColor);
 
-    })
-    .catch(console.error);
+//     })
+//     .catch(console.error);
 
 
 
@@ -77,39 +77,39 @@ function getColor(_color) {
 
 
 // SERIAL PORT
-//////////////////////////////////////////////////////////////////
-// https://serialport.io/docs/guide-usage
+// //////////////////////////////////////////////////////////////////
+// // https://serialport.io/docs/guide-usage
 
-// to list serial port, use these commands in terminal:
-// ls /dev/tty.*
-// ls /dev/cu.*
+// // to list serial port, use these commands in terminal:
+// // ls /dev/tty.*
+// // ls /dev/cu.*
 
-sp = new SerialPort({ path: '/dev/tty.usbmodem14201', baudRate: 115200 });
-sp.open(function (err) {
-    if (err) {
-        return console.log(err.message)
-    }
-})
+// sp = new SerialPort({ path: '/dev/tty.usbmodem14201', baudRate: 115200 });
+// sp.open(function (err) {
+//     if (err) {
+//         return console.log(err.message)
+//     }
+// })
 
-// The open event is always emitted
-sp.on('open', function () {
-    // open logic
-    console.log("Serial Port Opened");
-})
-
-
-// Write data to serial port 
-function sendToArduino(data) {
-    sp.write(data);
-}
+// // The open event is always emitted
+// sp.on('open', function () {
+//     // open logic
+//     console.log("Serial Port Opened");
+// })
 
 
-// Read data from serial port
-sp.on('data', function (data) {
-    console.log(data[0])    // print data to console
-    response = data[0];     // write it to response so we can show on canvas
+// // Write data to serial port 
+// function sendToArduino(data) {
+//     sp.write(data);
+// }
 
-})
+
+// // Read data from serial port
+// sp.on('data', function (data) {
+//     console.log(data[0])    // print data to console
+//     response = data[0];     // write it to response so we can show on canvas
+
+// })
 
 
 
@@ -142,26 +142,5 @@ function draw() {
 }
 
 
-
-// KEYBOARD INPUT
-//////////////////////////////////////////////////////////////////
-function keyPressed() {
-
-    if (key == 'A' || key == 'a') {
-        getColor("fire red");
-    }
-    if (key == 'B' || key == 'b') {
-        getColor("morning sky");
-    }
-
-    if (key == 'L' || key == 'l') {
-        sendToArduino('L');
-    }
-
-    if (key == 'H' || key == 'h') {
-        sendToArduino('H');
-    }
-
-}
 
 

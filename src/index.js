@@ -2,6 +2,9 @@ const { app, BrowserWindow } = require('electron');
 const { ipcMain } = require("electron"); // ipcMain is used to receive messages from the renderer process
 const path = require('path');
 
+// Dotenv for environment variables
+require('dotenv').config()
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -13,6 +16,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
+      plugins: true,
       nodeIntegration: true,
       contextIsolation: false,
       preload: path.join(__dirname, 'preload.js'),

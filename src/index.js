@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, components, BrowserWindow } = require('electron');
 const { ipcMain } = require("electron"); // ipcMain is used to receive messages from the renderer process
 const path = require('path');
 
@@ -31,20 +31,24 @@ const createWindow = () => {
 };
 
 
-// This is required to be set to false beginning in Electron v9 otherwise
-// the SerialPort module can not be loaded in Renderer processes like we are doing
-// in this example. The linked Github issues says this will be deprecated starting in v10,
-// however it appears to still be changed and working in v11.2.0
-// Relevant discussion: https://github.com/electron/electron/issues/18397
 app.whenReady(() => {
+  // This is required to be set to false beginning in Electron v9 otherwise
+  // the SerialPort module can not be loaded in Renderer processes like we are doing
+  // in this example. The linked Github issues says this will be deprecated starting in v10,
+  // however it appears to still be changed and working in v11.2.0
+  // Relevant discussion: https://github.com/electron/electron/issues/18397
   app.allowRendererProcessReuse = false
 })
+  .then(async () => {
+    // Load the components (CDM support)
+    // If this is not awaited, the Spotify SDK will fail to initialize
+    await components.whenReady();
 
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    createWindow();
+  })
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

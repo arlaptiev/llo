@@ -1,55 +1,6 @@
 
 const { ipcRenderer } = require("electron"); // ipcRenderer is used to send messages to the main process
 
-// // Serial Port
-// const { SerialPort } = require('serialport')
-// var sp = null;
-
-
-
-// // Initialize variables
-// var c;
-// var response;
-
-
-
-
-// GPT Connection via OpenAI NodeJS
-//////////////////////////////////////////////////////////////////
-//https://useems.github.io/openai-nodejs/index.html
-// const OpenAI = require('openai-nodejs');
-// const client = new OpenAI(OPENAI_API_KEY);
-
-
-// // Get a color when app is first loaded
-// let prompt = "the hex code for color 'bright pink' is";
-// let startColor;
-
-// client.complete(prompt, { stop: ['\n', '"'], temperature: 0 })
-//     .then(completion => {
-//         console.log(`Result: ${prompt}${completion.choices[0].text}`);
-
-//         // Grab string from the array
-//         startColor = completion.choices[0].text;
-
-//         // Remove spaces from the string
-//         startColor = trim(startColor);
-
-//         // Remove single quotes from the string
-//         startColor = startColor.replace(/'/g, '');
-
-//         //remove period from the string
-//         startColor = startColor.replace(/\./g, '');
-
-//         // update background color
-//         c = color(startColor);
-
-//     })
-//     .catch(console.error);
-
-
-
-
 // Get a new color when user presses a key
 function getColor(_color) {
 
@@ -71,52 +22,35 @@ function getColor(_color) {
             console.log(newColor);
         })
         .catch(console.error);
-
 }
-
-
-
-// SERIAL PORT
-// //////////////////////////////////////////////////////////////////
-// // https://serialport.io/docs/guide-usage
-
-// // to list serial port, use these commands in terminal:
-// // ls /dev/tty.*
-// // ls /dev/cu.*
-
-// sp = new SerialPort({ path: '/dev/tty.usbmodem14201', baudRate: 115200 });
-// sp.open(function (err) {
-//     if (err) {
-//         return console.log(err.message)
-//     }
-// })
-
-// // The open event is always emitted
-// sp.on('open', function () {
-//     // open logic
-//     console.log("Serial Port Opened");
-// })
-
-
-// // Write data to serial port 
-// function sendToArduino(data) {
-//     sp.write(data);
-// }
-
-
-// // Read data from serial port
-// sp.on('data', function (data) {
-//     console.log(data[0])    // print data to console
-//     response = data[0];     // write it to response so we can show on canvas
-
-// })
-
-
 
 
 // MAIN APP
 //////////////////////////////////////////////////////////////////
+
+const chat = new MusicChat();
+const player = new Player();
+
+class Controller {
+    constructor() {
+        this.runOnce = true
+    }
+
+    loop() {
+        if (player.ready) {
+            player.setVolume(1);
+            player.play('Cromby - Gigolo');
+            this.runOnce = false;
+        }
+    }
+}
+
+var c;
+let controller;
+
 function setup() {
+    controller = new Controller();
+
     createCanvas(200, 200);
 
     c = color('#bbbbbb');   //start w/ a grey background, until we get a color from openai
@@ -127,6 +61,8 @@ function setup() {
 
 
 function draw() {
+    controller.loop();
+
     background(c);  //update background color
 
     // Display color
@@ -138,7 +74,6 @@ function draw() {
     textSize(20);
     fill(255, 255, 255);
     text(response, 10, 100);
-
 }
 
 

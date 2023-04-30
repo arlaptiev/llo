@@ -1,11 +1,7 @@
 // Serial Port
-const { SerialPort } = require('serialport')
-var sp = null;
-
-
+const { SerialPort } = require('serialport');
 
 // Initialize variables
-var c;
 var response;
 
 // SERIAL PORT
@@ -16,7 +12,7 @@ var response;
 // ls /dev/tty.*
 // ls /dev/cu.*
 
-sp = new SerialPort({ path: '/dev/tty.usbmodem14201', baudRate: 115200 });
+const sp = new SerialPort({ path: '/dev/tty.usbmodem14201', baudRate: 115200 });
 sp.open(function (err) {
     if (err) {
         return console.log(err.message)
@@ -40,7 +36,6 @@ function sendToArduino(data) {
 sp.on('data', function (data) {
     console.log(data[0])    // print data to console
     response = data[0];     // write it to response so we can show on canvas
-
 })
 
 

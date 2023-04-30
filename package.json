@@ -22,14 +22,14 @@
     "electron-squirrel-startup": "^1.0.0",
     "openai": "^3.1.0",
     "openai-nodejs": "^1.1.0",
-    "serialport": "^10.5.0"
+    "serialport": "^11.0.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-deb": "^6.0.4",
-    "@electron-forge/maker-rpm": "^6.0.4",
-    "@electron-forge/maker-squirrel": "^6.0.4",
-    "@electron-forge/maker-zip": "^6.0.4",
-    "electron": "22.0.0"
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
+    "electron": "https://github.com/castlabs/electron-releases#v24.0.0+wvcus"
   }
 }

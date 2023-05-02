@@ -37,9 +37,9 @@ class Controller {
     }
 
     loop() {
-        if (player.ready) {
+        if (player.ready && this.runOnce) {
+            player.startTrack('Cromby - Gigolo');
             player.setVolume(1);
-            player.play('Cromby - Gigolo');
             this.runOnce = false;
         }
     }

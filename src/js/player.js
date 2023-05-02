@@ -1,8 +1,9 @@
 class Player {
+  /**
+   * This is a player class that mixes spotify tracks with radio noise.
+   */
   constructor() {
-    this.noiseVolume = 0.1;
-    this.trackVolume = 0.5;
-    this.ready = false
+    this.noiseMaxVolume = 0.1;
 
     this.noise = new Tone.Noise('pink');
     this.noiseGain = new Tone.Gain(this.noiseVolume);
@@ -10,48 +11,78 @@ class Player {
     this.noiseGain.toDestination();
     this.noise.start();
 
-    // spotifyPlayer.setVolume(0)
+    this.spotify = new SpotifyWrapper();
+    this.spotify.setVolume(0);
+
+    this.ready = false; // changed from SpotifyPlayer SDK
   }
 
-  setVolume(volume) {
-    spotifyPlayer.setVolume(volume * this.trackVolume)
-    this.noiseGain.gain.rampTo((1 - volume) * this.noiseVolume, 0.1);
+
+  timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async find(trackStr) {
-    const [artistName, trackName] = trackStr.split(' - ');
-    const params = {
-      q: `track:${trackName} artist:${artistName}`,
-      type: ['track'],
-      limit: 1,
+  async setVolume(volume, rampTime=2000) {
+    // get current track volume
+    const curVolume = await this.spotify.getVolume();
+
+    // gradual noise ramp
+    this.noiseGain.gain.rampTo((1 - volume) * this.noiseMaxVolume, rampTime);
+
+    // gradual track ramp
+    for(let i = 0; i < rampTime / 100; i++) {
+      this.spotify.setVolume(curVolume + (volume - curVolume) * i / (rampTime / 100));
+      await this.timeout(100);
     }
-    let query = new URLSearchParams(params);
-
-    const res = await spotifyApiGet(`search?${query}`)
-
-    if (res.tracks.total) {
-      return res.tracks.items[0]
-    }
-    return null
   }
 
-  async play(trackStr) {
+
+  async startTrack(trackStr) {
     // find track
-    const track = await this.find(trackStr);
+    const track = await this.spotify.find(trackStr);
 
-    // play track
     if (track) {
-      spotifyPlayer.pause();
+      // start track
+      this.spotify.play(track);
     }
 
     return track
   }
 
-  playNext() {
 
+  async transitionTrack(trackStr) {
+    // find track
+    const track = await this.spotify.find(trackStr);
+
+    if (track) {
+      // decrease volume
+      await this.setVolume(0);
+
+      // start track
+      await this.spotify.play(track);
+
+      // ramp volume
+      await this.setVolume(1);
+    }
+
+    return track
   }
 
-  queue(trackStr) {
 
+  playNext() {
+    this.spotify.playNext();
+  }
+
+
+  async queue(trackStr) {
+    // find track
+    const track = await this.spotify.find(trackStr);
+
+    if (track) {
+      // queue track
+      this.spotify.queue(track);
+    }
+
+    return track
   }
 }

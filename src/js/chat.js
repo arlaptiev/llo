@@ -37,6 +37,10 @@ class Chat {
 }
 
 class MusicChat {
+  /**
+   * This is a chatbot interface for music recommendations.
+   */
+
   async getRecommendation(curTrack, property) {
     // system message
     const context = "music";
@@ -45,7 +49,7 @@ class MusicChat {
     const chat = new Chat(context);
 
     // craft message
-    const msg = '' //todo
+    const msg = '' // TODO
     const res = await chat.ask(msg);
 
     return res

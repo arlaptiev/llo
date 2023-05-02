@@ -2,7 +2,7 @@
 const { SerialPort } = require('serialport');
 
 // Initialize variables
-var response;
+let response;
 
 // SERIAL PORT
 //////////////////////////////////////////////////////////////////

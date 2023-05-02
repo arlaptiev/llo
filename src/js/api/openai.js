@@ -18,8 +18,10 @@ const openAiApiFetch = async (path, options = {}) => {
           Authorization: `Bearer ${openAIAccessToken}`,
         };
   
-      response = await fetch(`${openAIApiUrl}/${path}`, options);
-      data = await response.json();
+        console.log(`Calling ${spotifyApiUrl}/${path}`, options)
+        response = await fetch(`${openAIApiUrl}/${path}`, options);
+        data = await response.json();
+        console.log('Got', data)
     }
   
     if (response.ok && response.status === 200) {

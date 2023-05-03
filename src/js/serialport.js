@@ -47,7 +47,7 @@ function keyPressed() {
       getColor("fire red");
   }
   if (key == 'B' || key == 'b') {
-      getColor("morning sky");
+      controller.transitionTrack("more");
   }
 
   if (key == 'L' || key == 'l') {

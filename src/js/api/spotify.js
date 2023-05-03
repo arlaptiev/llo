@@ -36,7 +36,8 @@ const spotifyApiFetch = async (path, options = {}) => {
   if (response.ok && response.status === 200) {
     return data;
   } else {
-    console.error(`Error calling ${path}`, data.message);
+    error = `[SPOTIFY] ${response.status}: ${data.error.message}`
+    console.error(`Error calling ${path}`, data.error);
   }
 };
 
@@ -93,6 +94,15 @@ class SpotifyWrapper {
     return null
   }
 
+  async transferPlayback(deviceId) {
+    const res = await spotifyApiPut('me/player', {
+      device_ids: [deviceId],
+      play: true
+    })
+
+    return res
+  }
+
   async play(track, position_ms=0) {
     const res = await spotifyApiPut('me/player/play', {
       uris: [track.uri],
@@ -103,13 +113,14 @@ class SpotifyWrapper {
   }
 
   async setVolume(volume) {
-    const res = await spotifyApiPut('me/player/volume?volume_percent=' + volume * 100)
+    const res = await spotifyApiPut('me/player/volume?volume_percent=' + parseInt(volume * 100))
 
     return res
   }
 
   async getVolume() {
     const res = await spotifyApiGet('me/player')
+    console.log('curPlayer', res)
 
     return res.device.volume_percent / 100
   }
@@ -133,41 +144,43 @@ class SpotifyWrapper {
 
 
 /**
- * Spotify Web Playback SDK
+ * Spotify Web Playback SDK (if wanted to play through Electron)
  */
 
-let spotifyPlayer;
+// let spotifyPlayer;
 
-window.onSpotifyWebPlaybackSDKReady = () => {
+// window.onSpotifyWebPlaybackSDKReady = () => {
 
-  spotifyPlayer = new Spotify.Player({
-      name: 'Web Playback SDK Quick Start Player',
-      getOAuthToken: cb => { cb(spotifyAccessToken); },
-      volume: 0.5
-  });
+//   spotifyPlayer = new Spotify.Player({
+//       name: 'MusicB0X',
+//       getOAuthToken: cb => { cb(spotifyAccessToken); },
+//       volume: 1
+//   });
 
-  // Ready
-  spotifyPlayer.addListener('ready', ({ device_id }) => {
-      console.log('Spofiy SDK Ready with Device ID', device_id);
-      player.ready = true
-  });
+//   // Ready
+//   spotifyPlayer.addListener('ready', async ({ device_id }) => {
+//       console.log('Spofiy SDK Ready with Device ID', device_id);
+//       await player.spotify.transferPlayback(device_id);
+//       console.log('Connected Play on Device ID', device_id);
+//       player.ready = true;
+//   });
 
-  // Not Ready
-  spotifyPlayer.addListener('not_ready', ({ device_id }) => {
-      console.log('Spofiy SDK: Device ID has gone offline', device_id);
-  });
+//   // Not Ready
+//   spotifyPlayer.addListener('not_ready', ({ device_id }) => {
+//       console.log('Spofiy SDK: Device ID has gone offline', device_id);
+//   });
 
-  spotifyPlayer.addListener('initialization_error', ({ message }) => {
-      console.error(message);
-  });
+//   spotifyPlayer.addListener('initialization_error', ({ message }) => {
+//       console.error(message);
+//   });
 
-  spotifyPlayer.addListener('authentication_error', ({ message }) => {
-      console.error(message);
-  });
+//   spotifyPlayer.addListener('authentication_error', ({ message }) => {
+//       console.error(message);
+//   });
 
-  spotifyPlayer.addListener('account_error', ({ message }) => {
-      console.error(message);
-  });
+//   spotifyPlayer.addListener('account_error', ({ message }) => {
+//       console.error(message);
+//   });
 
-  spotifyPlayer.connect()
-}
+//   spotifyPlayer.connect()
+// }

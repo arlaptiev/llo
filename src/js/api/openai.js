@@ -1,4 +1,5 @@
 const openAIAccessToken = process.env.OPENAI_API_KEY;
+const openAIApiUrl = 'https://api.openai.com/v1';
 
 if (!openAIAccessToken) {
     console.log('Please set your OPENAI_API_KEY environment variable and try again.')
@@ -27,6 +28,7 @@ const openAiApiFetch = async (path, options = {}) => {
     if (response.ok && response.status === 200) {
       return data;
     } else {
+      error = `[OPENAI] ${response.status}: ${data.message}`
       console.error(`Error calling ${path}`, data.message);
     }
   };

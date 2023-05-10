@@ -163,7 +163,7 @@ function draw() {
     }
 
     // Display error
-    textSize(10);
+    textSize(15);
     fill(255, 150, 150);
     text(error, 10, 170);
     if (error) {
